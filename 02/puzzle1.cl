@@ -9,11 +9,9 @@
 (defvar line)
 (loop
    (setf line (read-line input_fd nil))
-   (print line)
    (if (null line)
       (return))
-   (setf line (car (read-from-string line)))
-   (print line)
+   (setf line (read-from-string line))
    (eval line))
 
 ; multiply your final horizontal position by your final depth
