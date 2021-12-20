@@ -5,9 +5,6 @@
    :if-does-not-exist :create
 ))
 
-(defun write-expr (str)
-   (write-line (concatenate 'string "(" str ")") output_fd))
-
 (defvar line)
 (loop
    (setf line (read-line input_fd nil))
