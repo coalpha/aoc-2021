@@ -15,7 +15,7 @@
             (append (list word) (string-split needle rest)))))
 
 (defconstant fd (open "input.txt"))
-(defconstant days 80)
+(defconstant days 256)
 (defun make-state () (make-array 9 :element-type 'integer :initial-element 0))
 (defvar *state* (make-state))
 
