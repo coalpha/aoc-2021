@@ -1,4 +1,3 @@
-(defconstant input_fd (open "input.cl"))
 (defvar horizontal 0)
 (defvar depth 0)
 
@@ -6,18 +5,11 @@
 
 (defun down (n) (setf depth (+ depth n)))
 (defun up (n) (down (- n)))
-(defvar line)
-(loop
-   (setf line (read-line input_fd nil))
-   (if (null line)
-      (return))
-   (setf line (read-from-string line))
-   (eval line))
+(load "input.cl")
 
 ; multiply your final horizontal position by your final depth
 
 (defconstant answer (* horizontal depth))
 (princ answer)
 
-(close input_fd)
 (exit)
