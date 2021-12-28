@@ -1,9 +1,11 @@
 (load "../shared/common.cl")
-(defconstant fd (open "input.test.txt"))
+(defconstant fd (open "input.txt"))
 
 (defvar *width* 0)
 (defvar *height* 0)
 (defvar *cqkmbr* nil)
+(defvar *generation* 0)
+(defvar *moved* 0)
 
 (defun init-cqkmbr ()
    (defun cqkmbr-list (first-line? &optional (chr (read-char fd nil)) sym)
@@ -40,11 +42,37 @@
 (defun x-correct (x) (if (= x *width*) 0 x))
 (defun y-correct (y) (if (= y *height*) 0 y))
 
-(defun print-cqkmbr ()
+(defun prin- (amt) (dotimes (n amt) (princ "─")))
+
+(defun print-cqkmbr (&optional
+   (flag (format nil "~D:~D" *generation* *moved*))
+   (flagl (length flag)))
+
    (princ "┌")
-   (dotimes (n *width*)
-      (princ "─"))
+   (prin- flagl)
    (format t "┐~%")
+
+   (princ "│")
+   (princ flag)
+   (format t "│~%")
+
+   (princ "├")
+   (cond
+      ((< flagl *width*) (progn
+         (prin- flagl)
+         (princ "┴")
+         (prin- (- *width* 1 flagl))
+         (format t "┐~%")))
+      ((= flagl *width*) (progn
+         (prin- flagl)
+         (format t "┤~%")))
+      ((> flagl *width*) (progn
+         (prin- *width*)
+         (princ "┬")
+         (prin- (- flagl 1 *width*))
+         (format t "┘~%")))
+   )
+
    (dotimes (y *height*)
       (princ "│")
       (dotimes (x *width*)
@@ -52,8 +80,7 @@
       (format t "│~%"))
 
    (princ "└")
-   (dotimes (n *width*)
-      (princ "─"))
+   (prin- *width*)
    (format t "┘~%"))
 
 (init-cqkmbr)

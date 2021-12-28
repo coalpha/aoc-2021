@@ -1,8 +1,10 @@
 # advent of code 2021
 
-<img src="misc/icon2.png" width="120px"/>
+<img src="misc/icon2.png" width="200px"/>
 
 *Lisp, my favorite Gacha game*
+
+And I thought printf was bad. For your pleasure: [Formatted Output (Common-Lisp-style)](http://gnu.ist.utl.pt/software/kawa/Format.html)
 
 ### sister projects
 
