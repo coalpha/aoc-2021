@@ -52,9 +52,5 @@
       (apply fn (list e))))
 
 (defun words (str) (string-split #\  str))
-(defun charcat (a b) (format nil "~C~C"))
-
-(defun inner-join (sets)
-   (if (cdr sets)
-      (intersection (car sets) (inner-join (cdr sets)))
-      car sets))
+(defun set= (a b) (null (set-exclusive-or a b)))
+(defun str->list (str) (coerce str 'list))

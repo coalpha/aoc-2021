@@ -1,40 +1,19 @@
-; After some careful analysis, the mapping between signal wires and segments
-; only make sense in the following configuration:
-;  dddd
-; e    a
-; e    a
-;  ffff
-; g    b
-; g    b
-;  cccc
-
-(defun str->set (str) (coerce str 'list))
-(defvar *digits* nil)
-(defmacro d (n str)
-   `(defconstant
-      ,(intern (format nil "D~D" n))
-      (list ,@(coerce str 'list))))
-
-; So, the unique signal patterns would correspond to the following digits:
-
-(d 0 "cagedb")
-(d 1 "ab")
-(d 2 "gcdfa")
-(d 3 "fcadb")
-(d 4 "eafb")
-(d 5 "cdfeb")
-(d 6 "cdfgeb")
-(d 7 "dab")
-(d 8 "acedgfb")
-(d 9 "cefabd")
-
 (load "../shared/common.cl")
+
 ; NOTE: test input does not work
 (defconstant fd (open "input.txt"))
 
+(defconstant A '(0 2 3 5 6 7 8 9))
+(defconstant B '(0 4 5 6 8 9))
+(defconstant C '(0 1 2 3 4 7 8 9))
+(defconstant D '(2 3 4 5 6 8 9))
+(defconstant E '(0 2 6 8))
+(defconstant F '(0 1 3 4 5 6 7 8 9))
+(defconstant G '(0 2 3 5 6 8 9))
+
 ; given xxx xxx xxx | yyy yyy
 ; returns '(yyy yyy)
-(defun get-display (&optional (line (read-line fd nil)))
+(defun parse-display (&optional (line (read-line fd nil)))
    (and line (cdr (words (cadr (string-split #\| line))))))
 
 (defun word->digit (word)
