@@ -1,0 +1,16 @@
+@import "kawa.css";
+
+body { 
+  position: relative;
+  padding-left: 25%;
+  margin-right: 1em;
+  padding-right: 0;
+  border: 0;
+}
+
+
+div.navcol { 
+  position: absolute;
+  width: 25%;
+  top: 0em; right: 0em; bottom: 0em; left: 0em;
+ }

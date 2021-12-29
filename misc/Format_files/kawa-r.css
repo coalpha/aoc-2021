@@ -1,0 +1,15 @@
+@import "kawa.css";
+
+body {
+  position: relative;		/* Make containing block for the menus */
+  padding: 2em 17em 5em 2em;	/* Room for banner at the top */
+  margin: 0 }			/* 17em is too much, but IE6 needs it */
+html>body {
+  padding-right: 14em }		/* 14em overrides the 17em above */
+
+div.navcol{ margin-left: 30px; }
+
+div.navcol { 
+  width: 12.5em; 
+  top: 0em; right: 0em; bottom: 0em;
+ }
