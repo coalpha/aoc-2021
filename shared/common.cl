@@ -18,6 +18,8 @@
 (defmacro += (sym what) `(setf ,sym (+ ,sym ,what)))
 (defmacro inc (sym) `(+= ,sym 1))
 (defmacro succ (i) `(+ ,i 1))
+(defmacro strcat@ (&rest strs) `(concatenate 'string ,@strs))
+(defmacro strcat (strs) `(apply 'concatenate '(append '('string) ,strs)))
 (defmacro ifn (cond &rest form) `(if ,cond (progn ,@form)))
 (defmacro unlessn (cond &rest form) `(ifn (not ,cond) ,@form))
 (defmacro i/ (a b) `(floor (/ ,a ,b)))
@@ -44,3 +46,15 @@
    (defun unary (e) (apply fn (list e)))
    (vec-forieach 'unary vec)
    nil)
+
+(defun foreach* (fn any)
+   (dolist (e (coerce any 'list))
+      (apply fn (list e))))
+
+(defun words (str) (string-split #\  str))
+(defun charcat (a b) (format nil "~C~C"))
+
+(defun inner-join (sets)
+   (if (cdr sets)
+      (intersection (car sets) (inner-join (cdr sets)))
+      car sets))
