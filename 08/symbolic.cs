@@ -17,7 +17,7 @@ A5 := {A B D F G}
 A6 := {A B D E F G}
 A7 := {A C F}
 A8 := {A B C D E F G}
-A9 := {A B D E F G}
+A9 := {A B C D F G}
 A0 := {A B C E F G}
 
 A := {A1 A2 A3 A4 A5 A6 A7 A8 A9 A0}
@@ -57,7 +57,7 @@ filter (size 5) A = filter (size 5) Q
 {A2 A3 A5} = {Q2 Q3 Q5}
 
 filter (subset A1) {A2 A3 A5} = filter (subset Q1) {Q2 Q3 Q5}
-{A2 A5} = {Q2 A5}, A3 = Q3
+{A2 A5} = {Q2 Q5}, A3 = Q3
 
 intersect @explode{A2 A3 A5} = intersect @explode{Q2 Q3 Q5}
 {A D G} = {a d g}
@@ -93,3 +93,5 @@ A7 = Q7
 A8 = Q8
 A9 = Q9
 A0 = Q0
+
+// qed

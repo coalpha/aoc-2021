@@ -18,11 +18,14 @@
 (defmacro += (sym what) `(setf ,sym (+ ,sym ,what)))
 (defmacro inc (sym) `(+= ,sym 1))
 (defmacro succ (i) `(+ ,i 1))
+(defmacro pred (i) `(- ,i 1))
 (defmacro strcat@ (&rest strs) `(concatenate 'string ,@strs))
 (defmacro strcat (strs) `(apply 'concatenate '(append '('string) ,strs)))
 (defmacro ifn (cond &rest form) `(if ,cond (progn ,@form)))
 (defmacro unlessn (cond &rest form) `(ifn (not ,cond) ,@form))
 (defmacro i/ (a b) `(floor (/ ,a ,b)))
+(defmacro filter (&rest args)
+   `(remove-if-not ,@args))
 
 (defun list-forieach (fn vec)
    (defun rec (i rest)
@@ -54,3 +57,12 @@
 (defun words (str) (string-split #\  str))
 (defun set= (a b) (null (set-exclusive-or a b)))
 (defun str->list (str) (coerce str 'list))
+(defmacro set2f (symA symB val)
+   `(progn
+      (setf ,symA (car ,val))
+      (setf ,symB (cadr ,val))))
+
+(defun inner-join (sets)
+   (if (cdr sets)
+      (intersection (car sets) (inner-join (cdr sets)))
+      (car sets)))
