@@ -6,7 +6,7 @@
 (defun chars-words (what)
    (mapcar 'str->list (words what)))
 
-(defun parse-display (line &optional barpos left right)
+(defun parse-line (line &optional barpos left right)
    (setf barpos (position #\| line))
    (setf left (subseq line 0 (- barpos 1)))
    (setf right (subseq line (+ barpos 2)))
@@ -47,10 +47,36 @@
    (carsa A 0 (remove-if (has-element d) s6))
 
    (setf e (car (set-difference (aref A 8) (aref A 9))))
-   (carsa A 5 (filter (has-element e) s5))
+   (carsa A 5 (remove-if (has-element e) s5))
    (carsa A 2 (filter (has-element e) s5))
    A)
 
-(defconstant ex (parse-display "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"))
-(print-sln (solve (car ex)))
+(defun set-lookup (vec set)
+   (let ((i 0) (l (length vec)))
+      (loop
+         (if (= i l)
+            (error "Cannot find ~F in ~F!~%" set vec))
+         (if (set= set (aref vec i))
+            (return)
+            (inc i)))
+      i
+   )
+)
+
+(defvar *acc* 0)
+(loop
+   (let (line allten display A (sum 0))
+      (setf line (read-line fd nil))
+      (if (null line)
+         (return))
+      (set2f allten display (parse-line line))
+      (setf A (solve allten))
+      (setf sum (+
+         (* (set-lookup A (elt display 0)) 1000)
+         (* (set-lookup A (elt display 1)) 0100)
+         (* (set-lookup A (elt display 2)) 0010)
+         (* (set-lookup A (elt display 3)) 0001)))
+      (format t "~A: ~D~%" display sum)
+      (+= *acc* sum)))
+(princ *acc*)
 (exit)
