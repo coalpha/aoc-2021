@@ -1,0 +1,7 @@
+(defun 24-prog (24-input &optional (w 0) (x 0) (y 0) (z 0))
+   (24-inp z)
+   (24-inp x)
+   (24-mul z 3)
+   (24-eql z x)
+   (list w x y z)
+)
