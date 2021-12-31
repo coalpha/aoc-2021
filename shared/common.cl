@@ -66,3 +66,40 @@
    (if (cdr sets)
       (intersection (car sets) (inner-join (cdr sets)))
       (car sets)))
+
+(defmacro token! (tok &optional (want (symbol-name tok)))
+   `(let ((actual (symbol-name ,tok)))
+      (unless (equal ,want actual) (error "Expected token ~F but instead found ~F" ,want actual))))
+
+(defmacro vec-for (sym in vec do &rest form)
+   (token! in)
+   (token! do)
+   (let ((i (car sym)) (e (cadr sym)) (l (caddr sym)))
+      `(let ((,i 0) (,l (length ,vec)) ,e)
+         (loop
+            (if (= ,i ,l) (return))
+            (setf ,e (aref ,vec ,i))
+            ,@form
+            (inc ,i)
+         )
+      )
+   )
+)
+
+(defmacro list-for (sym in list do &rest form)
+   (token! in)
+   (token! do)
+   (let ((i (car sym)) (e (cadr sym)))
+      `(let ((,i 0) (rest ,list) ,e)
+         (loop
+            (setf ,e (car rest))
+            (setf rest (cdr rest))
+            (if (null ,e) (return))
+            ,@form
+            (inc ,i)
+         )
+      )
+   )
+)
+
+(defun <> (a b) (not (= a b)))
