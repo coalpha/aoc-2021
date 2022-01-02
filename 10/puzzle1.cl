@@ -31,13 +31,12 @@
 
             if eq(c open) {
                stack = cons(open stack)
-
                break(pair-search)
-            } else
+            }
+
             if eq(c close) {
                if eq(car(stack) open) {
                   stack = cdr(stack)
-
                   break(pair-search)
                } else {
                   format(t "expected stack to have `~C', not `~C'~%" open car(stack))
