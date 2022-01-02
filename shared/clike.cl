@@ -8,6 +8,30 @@
 (defmacro psh! (sym e) `(setf ,sym (psh ,sym ,e)))
 (defmacro car! (sym) `(let ((fst (car ,sym))) (setf ,sym (cdr ,sym)) fst))
 
+(defun clike-while-tag-top (sym-or-nil)
+   (intern
+      (concatenate
+         'string
+         "clike-while-top"
+         (if sym-or-nil
+            (concatenate 'string "-" (symbol-name sym-or-nil))
+            "")
+      )
+   )
+)
+
+(defun clike-while-tag-end (sym-or-nil)
+   (intern
+      (concatenate
+         'string
+         "clike-while-end"
+         (if sym-or-nil
+            (concatenate 'string "-" (symbol-name sym-or-nil))
+            "")
+      )
+   )
+)
+
 (declaim (ftype function clike-scope))
 (defun clike-expr (ts)
    (let (curr out)
@@ -16,10 +40,22 @@
       (if (symbolp curr)
          (cond
             ((sym-is curr "BREAK") (progn
-               (setf out `(go clike-while-end))
+               (let ((next (car! ts)))
+                  (unless (listp next)
+                     (error "`break' must be invoked, it cannot be a bareword!"))
+                  (if (> (length next) 1)
+                     (error "too many arguments to `break' (provide at most 1)"))
+                  (setf out `(go ,(clike-while-tag-end (car next))))
+               )
             ))
             ((sym-is curr "CONTINUE") (progn
-               (setf out `(go clike-while-top))
+               (let ((next (car! ts)))
+                  (unless (listp next)
+                     (error "`continue' must be invoked, it cannot be a bareword!"))
+                  (if (> (length next) 1)
+                     (error "too many arguments to `continue` (provide at most 1)"))
+                  (setf out `(go ,(clike-while-tag-top (car next))))
+               )
             ))
             ((and ts (car ts) (listp (car ts))) (progn
                ; curr(variable) and curr(variable nil) because we don't want
@@ -111,7 +147,20 @@
 )
 
 (defun clike-while (ts)
-   (let (res-cond res-body)
+   (let (res-cond res-body tag-top tag-end)
+      (if (listp (car ts))
+         (let ((next (car! ts)))
+            (if (> (length next) 1)
+               (error "while(<at most 1 symbol here>)"))
+            (setf tag-top (clike-while-tag-top (car next)))
+            (setf tag-end (clike-while-tag-end (car next)))
+         )
+         (progn
+            (setf tag-top (clike-while-tag-top nil))
+            (setf tag-end (clike-while-tag-end nil))
+         )
+      )
+
       (setf res-cond (clike-expr ts))
       (setf ts (cdr res-cond))
       (token! (car! ts) "{")
@@ -122,11 +171,11 @@
 
       (cons
          `(tagbody
-            clike-while-top
-               (unless ,(car res-cond) (go clike-while-end))
-               ,(car res-body)
-               (go clike-while-top)
-            clike-while-end
+            ,tag-top
+            (unless ,(car res-cond) (go ,tag-end))
+            ,(car res-body)
+            (go ,tag-top)
+            ,tag-end
          )
          ts
       )
@@ -144,12 +193,18 @@
       (token! (car! ts) "}")
 
       (if (sym-is (car ts) "ELSE")
-         (progn
-            (car! ts)
-            (token! (car! ts) "{")
-            (setf res-else (clike-scope ts))
-            (setf ts (cdr res-else))
-            (token! (car! ts) "}")
+         (let (next)
+            (car! ts) ; remove else token
+            (setf next (car! ts))
+            (if (sym-is next "IF")
+               (progn
+                  (setf res-else (clike-if ts))
+                  (setf ts (cdr res-else)))
+               (progn
+                  (setf res-else (clike-scope ts))
+                  (setf ts (cdr res-else))
+                  (token! (car! ts) "}"))
+            )
          )
       )
       (cons `(if ,(car res-cond) ,(car res-body) ,(car res-else)) ts)
